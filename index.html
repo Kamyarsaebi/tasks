@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تقویم کارها</title>
+<meta name="theme-color" content="#0e8f8a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@font-face{font-family:Vazirmatn;src:url(fonts/Vazirmatn-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{--bg:#f2f6fb;--card:#fff;--ink:#1b2a3a;--mut:#6f8197;--line:#e3eaf2;--ac:#0e8f8a;--ac2:rgba(14,143,138,.14);--g1:#0e8f8a;--g2:#2f7de1;--ok:#22a06b;--today:#f2a93b;--warn:#c2410c;--sh:0 10px 30px rgba(20,40,70,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#0d141b;--card:#162029;--ink:#e6eef6;--mut:#8aa0b5;--line:#243340;--ok:#3dd68c;--sh:0 10px 30px rgba(0,0,0,.4)}}
+*{box-sizing:border-box;font-family:"B Nazanin",Nazanin,Vazirmatn,serif}
+body{margin:0;min-height:100vh;color:var(--ink);font-size:18px;line-height:1.6;padding:0 14px 104px;background:var(--bg) radial-gradient(800px 380px at 90% -8%,var(--ac2),transparent) no-repeat}
+@media(max-width:780px){body{font-size:16px}}
+.hd0{max-width:940px;margin:0 auto;padding:18px 4px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hd0 small{color:var(--mut);display:block;line-height:1.2}
+#me{font-size:24px;font-weight:bold;cursor:pointer}
+#pt{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border-radius:999px;padding:3px 16px;font-weight:bold;box-shadow:var(--sh);white-space:nowrap}
+.tabs{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:4px;width:min(520px,calc(100% - 24px));background:var(--card);border:1px solid var(--line);border-radius:24px;padding:6px;box-shadow:var(--sh);z-index:5}
+.tabs button{flex:1;border:0;background:none;border-radius:18px;padding:5px 2px;font-size:14px;line-height:1.3;color:var(--mut);display:flex;flex-direction:column;align-items:center;box-shadow:none}
+.tabs button.p{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff}
+.tabs i{font-style:normal;font-size:20px}
+.wrap{max-width:940px;margin:auto;display:grid;gap:14px;grid-template-columns:1.25fr 1fr}
+@media(max-width:780px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:var(--sh)}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px}
+.top h2{margin:0;font-size:22px}
+h3{margin:0 0 10px;font-size:20px}
+button,input,select{font:inherit;color:var(--ink)}
+button{cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:3px 14px;transition:.15s}
+button:hover{border-color:var(--ac)}
+button.p{background:linear-gradient(135deg,var(--g1),var(--g2));border:0;color:#fff;box-shadow:0 4px 12px var(--ac2)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.hd{text-align:center;color:var(--mut);font-size:15px}
+.d{min-height:62px;background:var(--bg);border-radius:14px;padding:4px 6px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;transition:.15s}
+.d:hover{background:var(--ac2)}
+.d.t{box-shadow:inset 0 0 0 2px var(--today)}
+.d.s{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff}
+.d.s small{color:#ffffffd0!important}
+.d.full b::after{content:' ✓';color:var(--ok);font-size:14px}
+.d.s.full b::after{color:#fff}
+.r{display:flex;justify-content:space-between;align-items:center;gap:3px}
+.r small{color:var(--mut);font-size:13px}
+.dots{display:flex;gap:3px;flex-wrap:wrap}
+.dots i{width:8px;height:8px;border-radius:50%;display:block;box-shadow:0 0 0 1.5px #fff8}
+.e{visibility:hidden}
+.stat{margin-top:12px;color:var(--mut);font-size:16px}
+.warn{color:var(--warn)}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ok),var(--g2));width:0;border-radius:6px;transition:width .4s}
+.tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.add{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.add input,.add select,dialog input,dialog select{padding:5px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+#in{flex:1;min-width:140px}
+.ring{width:48px;height:48px;border-radius:50%;display:grid;place-content:center;font-size:13px;font-weight:bold;position:relative;flex:none;background:var(--line)}
+.ring::before{content:'';position:absolute;inset:5px;background:var(--card);border-radius:50%}
+.ring span{position:relative}
+.t-row{display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:8px;background:var(--bg);border-radius:14px;border-inline-start:5px solid var(--tc,transparent)}
+.t-row input[type=checkbox]{appearance:none;-webkit-appearance:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--mut);display:grid;place-content:center;cursor:pointer;flex:none;background:var(--card)}
+.t-row input:checked{background:var(--ok);border-color:var(--ok)}
+.t-row input:checked::after{content:'✓';color:#fff;font-size:16px;line-height:1}
+.t-row span.tx{flex:1;cursor:pointer}
+.t-row.done span.tx{text-decoration:line-through;color:var(--mut)}
+.chip{font-size:14px;border-radius:12px;padding:1px 10px;color:#fff;white-space:nowrap}
+.tm{font-size:14px;color:var(--ac);font-weight:bold;white-space:nowrap}
+.x{border:0;color:var(--mut);padding:2px 8px;background:none}
+.empty{color:var(--mut);padding:10px 0;text-align:center}
+#v2,#v3{display:none;max-width:940px;margin:auto}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+.sum div{background:var(--bg);border-radius:16px;text-align:center;padding:10px 4px;font-size:15px}
+.sum b{display:block;font-size:26px;color:var(--ac)}
+.wr{display:flex;align-items:center;gap:10px;margin:6px 0}
+.wl{width:130px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:780px){.cols{grid-template-columns:1fr}}
+.pd{display:grid;grid-template-columns:80px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.pb{display:flex;gap:6px;flex-wrap:wrap}
+.note{color:var(--mut);font-size:15px;margin:8px 0}
+dialog{background:var(--card);color:var(--ink);border:0;border-radius:22px;box-shadow:var(--sh);padding:20px;min-width:min(340px,92vw)}
+dialog::backdrop{background:rgba(10,20,30,.5)}
+.tr{display:flex;gap:6px;margin-bottom:10px;align-items:center}
+.tr input[type=color]{width:36px;height:30px;padding:0;border:0;background:none}
+.tr input[type=text]{flex:1}
+.tr label{display:flex;gap:6px;align-items:center}
+.sw{display:flex;gap:10px;margin:10px 0}
+.sw input{display:none}
+.sw span{display:block;width:36px;height:36px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.sw input:checked+span{border-color:var(--ink)}
+#tt{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;padding:6px 20px;border-radius:20px;display:none;z-index:9;box-shadow:var(--sh)}
+.cf{position:fixed;top:-20px;width:9px;height:14px;border-radius:2px;z-index:99;animation:fall 1.6s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.3}}
+</style>
+</head>
+<body>
+<header class="hd0"><div><small>سلام</small><div id="me" title="ویرایش پروفایل"></div></div><span id="pt"></span></header>
+<nav class="tabs"><button id="tb1" class="p"><i>📅</i>تقویم</button><button id="tb2"><i>📊</i>گزارش</button><button id="tb3"><i>🗓️</i>برنامه</button><button id="tb4"><i>🎁</i>پاداش‌ها</button></nav>
+
+<div class="wrap" id="v1">
+  <div class="card">
+    <div class="top">
+      <button id="nx">‹</button><h2 id="mt"></h2><button id="pv">›</button>
+    </div>
+    <div class="grid" id="g"></div>
+    <div class="stat"><div id="st"></div><div class="bar" style="margin-top:5px"><i id="br"></i></div><div id="sk"></div></div>
+    <div class="tools">
+      <button id="td">امروز</button>
+      <button id="rp" class="p">گزارش ماه (CSV)</button>
+      <button id="tg">مدیریت تگ‌ها</button>
+      <button id="bk">بکاپ</button>
+      <button id="rs">بازیابی</button>
+      <input type="file" id="fi" accept=".json" hidden>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top"><div id="rg" class="ring"></div><h3 id="dt" style="margin:0;flex:1"></h3><button id="mv">انتقال همه ›</button></div>
+    <div class="add">
+      <input id="in" placeholder="کار جدید...">
+      <input id="tm" type="time" title="ساعت (اختیاری)">
+      <select id="ts"></select>
+      <button class="p" id="ad">افزودن</button>
+    </div>
+    <div id="ls"></div>
+  </div>
+</div>
+
+<div class="card" id="v2">
+  <div class="top">
+    <button id="wn">‹</button><h2 id="wt"></h2><button id="wp">›</button>
+  </div>
+  <div class="tools" style="margin:0 0 6px"><button id="wc">هفته جاری</button><button id="wx" class="p">گزارش هفته (CSV)</button></div>
+  <div class="sum" id="sm"></div>
+  <h3>هر روز</h3><div id="wd"></div>
+  <h3 style="margin-top:14px">به تفکیک تگ</h3><div id="wg"></div>
+  <div class="cols" style="margin-top:14px"><div><h3>انجام شده</h3><div id="wdn"></div></div><div><h3>انجام نشده</h3><div id="wpd"></div></div></div>
+</div>
+
+<div class="card" id="v3">
+  <h3>برنامه هفتگی ثابت</h3>
+  <div class="note">کار: شنبه تا چهارشنبه ۷ تا ۱۷:۳۰ (رسیدن به خانه ۱۷:۳۰)، پنجشنبه ۷ تا ۱۳. از پنجشنبه ۱۸ تا جمعه ۱۸ و بعد از ۲۲:۳۰ برنامه‌ای نیست. شام بعد از ۲۲:۳۰ و خواب ۰۰ تا ۰۱.</div>
+  <div id="pw"></div>
+  <div class="add" style="margin-top:12px"><select id="psd"></select><input id="psa" type="time"><input id="psb" type="time"><select id="psg"></select><input id="pst" placeholder="عنوان بلوک" style="flex:1;min-width:120px"><button class="p" id="psadd">+ بلوک</button></div>
+  <h3 style="margin-top:14px">جمع ساعت‌های هر هفته</h3><div id="pp" class="pb"></div>
+  <div class="tools"><button id="pg" class="p">ساخت برنامه از فردا در تقویم</button></div>
+  <div class="note">روی عنوان هر کار (در تقویم) کلیک کن تا عنوان، ساعت و تگ را ویرایش کنی؛ تغییر را می‌توانی فقط برای همان کار یا برای همهٔ کارهای آن برنامه (و برنامهٔ هفتگی) اعمال کنی. با «ساخت» دوباره، کارهای برنامه‌ایِ انجام‌نشدهٔ از فردا به بعد (حتی جابه‌جاشده‌ها) از روی برنامهٔ هفتگیِ فعلی بازسازی می‌شوند؛ تیک‌خورده‌ها و کارهای دستی ثابت می‌مانند.</div>
+</div>
+
+<dialog id="pfd">
+  <h3>پروفایل</h3>
+  <div class="tr"><input type="text" id="pn" placeholder="نام تو"></div>
+  <div class="sw" id="psw"></div>
+  <div id="pfs" style="margin-bottom:10px"><label style="display:block"><input type="radio" name="st" value="1" checked> شروع با برنامهٔ هفتگی پیشنهادی</label><label style="display:block"><input type="radio" name="st" value="0"> شروع با برنامهٔ خالی (خودم می‌سازم)</label></div>
+  <div class="tools"><button id="pfok" class="p">ذخیره</button></div>
+</dialog>
+<div id="tt"></div>
+<dialog id="rwd">
+  <h3>پاداش‌ها <span id="rb" style="color:var(--ac)"></span></h3>
+  <div id="rl"></div>
+  <div class="tr"><input type="text" id="rn" placeholder="پاداش جدید"><input type="number" id="rc" placeholder="امتیاز" style="width:80px"><button id="ra">+</button></div>
+  <div id="rh" class="note"></div>
+  <div class="tools"><button id="rx" class="p">بستن</button></div>
+</dialog>
+
+<dialog id="edd">
+  <h3>ویرایش کار</h3>
+  <div class="tr"><input type="text" id="ei" placeholder="عنوان"></div>
+  <div class="tr"><label>شروع <input type="time" id="e1"></label><label>پایان <input type="time" id="e2"></label></div>
+  <div class="tr"><select id="eg"></select></div>
+  <div class="tr" id="esw" style="flex-direction:column;align-items:flex-start"><label><input type="radio" name="sc" value="1" checked> فقط همین کار</label><label><input type="radio" name="sc" value="2"> همهٔ کارهای این برنامه (از امروز به بعد و برنامهٔ هفتگی)</label></div>
+  <div class="tools"><button id="es" class="p">ذخیره</button><button id="ec">بستن</button></div>
+</dialog>
+
+<dialog id="dg">
+  <h3>تگ‌ها</h3><div id="tl"></div>
+  <div class="tools"><button id="ta">+ تگ جدید</button><button id="cl" class="p">بستن</button></div>
+</dialog>
+
+<script>
+const K='tasks_calendar_v2',$=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let S={days:{},bk:0,tags:[]};
+try{const r=localStorage.getItem(K);if(r)S=JSON.parse(r);else{const o=localStorage.getItem('tasks_calendar_v1');if(o)S.days=JSON.parse(o)}}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){alert('ذخیره نشد! بکاپ بگیر.')}};
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const F=new Intl.DateTimeFormat('fa-IR-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric'});
+const jp=d=>{const o={};F.formatToParts(d).forEach(p=>o[p.type]=+p.value);return o};
+const fa=(d,o)=>d.toLocaleDateString('fa-IR-u-ca-persian',o);
+const nz=n=>n.toLocaleString('fa-IR');
+const ft=t=>t.replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const tmx=x=>ft(x.tm)+(x.te?'–'+ft(x.te):'');
+const first=d=>{d=new Date(d);d.setHours(12);d.setDate(d.getDate()-(jp(d).day-1));return d};
+const sow=d=>{d=new Date(d);d.setHours(12);d.setDate(d.getDate()-((d.getDay()+1)%7));return d};
+const add=(d,n)=>{d=new Date(d);d.setDate(d.getDate()+n);return d};
+const tg=id=>S.tags.find(t=>t.id===id);
+const ord=L=>L.map((x,i)=>[x,i]).sort((p,q)=>(p[0].tm||'99').localeCompare(q[0].tm||'99'));
+const chip=x=>{const t=tg(x.g);return t?`<span class="chip" style="background:${t.c}">${esc(t.n)}</span>`:''};
+const W=['ش','ی','د','س','چ','پ','ج'];
+let view=first(new Date()),sel=iso(new Date()),wk=sow(new Date());
+
+function streak(){
+  let d=new Date();d.setHours(12);let n=0;
+  const full=k=>{const L=S.days[k]||[];return L.length&&L.every(x=>x.d)};
+  const tl=S.days[iso(d)]||[];
+  if(tl.length&&!full(iso(d)))d=add(d,-1);
+  else if(!tl.length)d=add(d,-1);
+  for(let i=0;i<400&&full(iso(d));i++){n++;d=add(d,-1)}
+  return n;
+}
+function render(){
+  const m=jp(view).month;
+  $('mt').textContent=fa(view,{month:'long',year:'numeric'});
+  let h=W.map(w=>`<div class="hd">${w}</div>`).join('');
+  for(let i=0;i<(view.getDay()+1)%7;i++)h+='<div class="e"></div>';
+  let tot=0,dn=0,d=new Date(view);
+  while(jp(d).month===m){
+    const k=iso(d),L=S.days[k]||[],c=L.filter(x=>x.d).length;
+    tot+=L.length;dn+=c;
+    const gs=[...new Set(L.map(x=>x.g).filter(g=>tg(g)))].map(g=>`<i style="background:${tg(g).c}"></i>`).join('');
+    h+=`<div class="d${k===iso(new Date())?' t':''}${k===sel?' s':''}${L.length&&c===L.length?' full':''}" data-k="${k}"><b>${nz(jp(d).day)}</b><div class="r"><span class="dots">${gs}</span><small>${L.length?nz(c)+'/'+nz(L.length):''}</small></div></div>`;
+    d=add(d,1);
+  }
+  $('g').innerHTML=h;
+  $('st').textContent=tot?`این ماه: ${nz(dn)} از ${nz(tot)} کار انجام شد (${nz(Math.round(dn/tot*100))}٪)`:'هنوز کاری برای این ماه ثبت نشده';
+  $('br').style.width=tot?dn/tot*100+'%':'0';
+  const s=streak(),old=Date.now()-S.bk>7*864e5&&Object.keys(S.days).length;
+  const td=iso(new Date());let od=0;Object.keys(S.days).forEach(k=>{if(k<td)od+=S.days[k].filter(x=>!x.d).length});
+  $('sk').innerHTML=(s?`روزهای متوالیِ کامل: ${nz(s)}`:'')+(od?`<div class="warn">${nz(od)} کار انجام‌نشده از روزهای قبل <button id="od">رفتن به اولین مورد</button></div>`:'')+(old?`<div class="warn">بیش از ۷ روز از آخرین بکاپ گذشته؛ بکاپ بگیر.</div>`:'');
+  badge();day();
+}
+function day(){
+  const [y,mo,da]=sel.split('-').map(Number),L=S.days[sel]||[];
+  $('dt').textContent=fa(new Date(y,mo-1,da,12),{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const dn=L.filter(x=>x.d).length,pc=L.length?Math.round(dn/L.length*100):0;$('rg').style.background=`conic-gradient(var(--ok) ${pc}%,var(--line) 0)`;$('rg').innerHTML=`<span>${nz(pc)}٪</span>`;
+  const cur=$('ts').value;
+  $('ts').innerHTML='<option value="">بدون تگ</option>'+S.tags.map(t=>`<option value="${t.id}">${esc(t.n)}</option>`).join('');
+  if(tg(cur))$('ts').value=cur;
+  $('ls').innerHTML=L.length?ord(L).map(([x,i])=>`<div class="t-row${x.d?' done':''}" style="--tc:${(tg(x.g)||{c:'transparent'}).c}"><input type="checkbox" data-i="${i}"${x.d?' checked':''}>${x.tm?`<span class="tm">${tmx(x)}</span>`:''}${chip(x)}<span class="tx" data-e="${i}" title="ویرایش عنوان">${esc(x.t)}</span>${x.d?'':`<button class="x" data-m="${i}" title="انتقال به روز دیگر">انتقال ›</button>`}<button class="x" data-x="${i}">✕</button></div>`).join(''):'<div class="empty">کاری برای این روز نیست.</div>';
+}
+$('g').onclick=e=>{const c=e.target.closest('.d');if(c){sel=c.dataset.k;render()}};
+$('ls').onclick=e=>{
+  const D=e.target.dataset,L=S.days[sel];
+  if(D.i!==undefined){L[D.i].d=e.target.checked;if(e.target.checked){toast('+'+nz(pts(L[D.i]))+' امتیاز');if(L.length>1&&L.every(x=>x.d)){toast('روز کامل! ۲۰+ امتیاز بونوس');boom()}}}
+  else if(D.x!==undefined){L.splice(D.x,1);if(!L.length)delete S.days[sel]}
+  else if(D.e!==undefined){openEd(D.e);return}
+  else if(D.m!==undefined){
+    const k=target();if(!k||k===sel)return;
+    const t=L.splice(D.m,1)[0];if(!L.length)delete S.days[sel];(S.days[k]=S.days[k]||[]).push(t);
+  }else return;
+  save();render();
+};
+const en=s=>s.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+function target(){
+  const v=prompt('به کدام روز منتقل شود؟\n۰ = امروز | ۱ = یک روز بعد از همین روز | ۷ = یک هفته بعد',1);
+  if(v===null)return null;const n=parseInt(en(v));if(isNaN(n)||n<0)return null;
+  if(n===0)return iso(new Date());
+  const [y,mo,da]=sel.split('-').map(Number);return iso(new Date(y,mo-1,da+n,12));
+}
+$('mv').onclick=()=>{
+  const L=S.days[sel]||[],u=L.filter(x=>!x.d);if(!u.length)return alert('کار انجام‌نشده‌ای در این روز نیست.');
+  const k=target();if(!k||k===sel)return;
+  S.days[sel]=L.filter(x=>x.d);if(!S.days[sel].length)delete S.days[sel];
+  (S.days[k]=S.days[k]||[]).push(...u);save();render();
+};
+$('sk').onclick=e=>{
+  if(e.target.id!=='od')return;
+  const k=Object.keys(S.days).filter(k=>k<iso(new Date())&&S.days[k].some(x=>!x.d)).sort()[0];
+  if(k){sel=k;const [y,mo,da]=k.split('-').map(Number);view=first(new Date(y,mo-1,da,12));render()}
+};
+let er=null;
+function openEd(i){
+  const x=S.days[sel][i];er={k:sel,i};
+  $('ei').value=x.t;$('e1').value=x.tm||'';$('e2').value=x.te||'';
+  $('eg').innerHTML='<option value="">بدون تگ</option>'+S.tags.map(t=>`<option value="${t.id}">${esc(t.n)}</option>`).join('');
+  $('eg').value=tg(x.g)?x.g:'';
+  $('esw').style.display=x.sid&&S.tpl.some(s=>s.id===x.sid)?'flex':'none';
+  document.querySelector('input[name=sc][value="1"]').checked=true;
+  $('edd').showModal();
+}
+$('ec').onclick=()=>$('edd').close();
+$('es').onclick=()=>{
+  const x=S.days[er.k][er.i],v={t:$('ei').value.trim()||x.t,tm:$('e1').value,te:$('e2').value,g:$('eg').value};
+  if($('esw').style.display!=='none'&&document.querySelector('input[name=sc]:checked').value==='2'){
+    const sl=S.tpl.find(s=>s.id===x.sid),td=iso(new Date());
+    Object.assign(sl,{t:v.t,a:v.tm||sl.a,b:v.te||sl.b,g:v.g});
+    Object.keys(S.days).forEach(k=>{if(k>=td)S.days[k].forEach(y=>{if(y.sid===x.sid&&!y.d){y.t=v.t;y.tm=sl.a;y.te=sl.b;y.g=v.g}})});
+  }
+  Object.assign(x,v);save();$('edd').close();render();
+};
+function addTask(){
+  const v=$('in').value.trim();if(!v)return;
+  (S.days[sel]=S.days[sel]||[]).push({t:v,d:false,tm:$('tm').value,g:$('ts').value});
+  $('in').value='';save();render();
+}
+$('ad').onclick=addTask;$('in').onkeydown=e=>{if(e.key==='Enter')addTask()};
+$('nx').onclick=()=>{view=first(add(view,-1));render()};
+$('pv').onclick=()=>{view=first(add(view,32));render()};
+$('td').onclick=()=>{view=first(new Date());sel=iso(new Date());render()};
+
+async function dl(name,text,type){
+  const C=window.Capacitor;
+  if(C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins.Filesystem&&C.Plugins.Share){
+    try{const r=await C.Plugins.Filesystem.writeFile({path:name,data:text,directory:'CACHE',encoding:'utf8'});await C.Plugins.Share.share({title:name,url:r.uri});return}catch(e){if(String(e).toLowerCase().includes('cancel'))return}
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();
+}
+function csv(a,b,name){
+  let r='\uFEFFتاریخ,ساعت,تگ,کار,وضعیت\n';
+  for(let d=new Date(a);d<=b;d=add(d,1))
+    ord(S.days[iso(d)]||[]).forEach(([x])=>r+=`${fa(d)},${x.tm?tmx(x):''},${tg(x.g)?esc(tg(x.g).n):''},"${x.t.replace(/"/g,'""')}",${x.d?'انجام شد':'انجام نشد'}\n`);
+  dl(name,r.replace(/&amp;/g,'&'),'text/csv;charset=utf-8');
+}
+$('rp').onclick=()=>csv(view,add(first(add(view,32)),-1),'report-month-'+iso(view)+'.csv');
+$('bk').onclick=()=>{S.bk=Date.now();save();dl('tasks-backup-'+iso(new Date())+'.json',JSON.stringify(S),'application/json');render()};
+$('rs').onclick=()=>$('fi').click();
+$('fi').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    let o=JSON.parse(r.result);if(typeof o!=='object'||Array.isArray(o)||!o)throw 0;
+    if(!o.days)o={days:o,bk:S.bk,tags:S.tags};
+    if(confirm('اطلاعات فعلی با بکاپ جایگزین شود؟')){S=o;save();render()}
+  }catch(_){alert('فایل بکاپ معتبر نیست.')}};
+  r.readAsText(f);e.target.value='';
+};
+
+/* tags */
+function tagList(){$('tl').innerHTML=S.tags.map((t,i)=>`<div class="tr"><input type="color" value="${t.c}" data-i="${i}" data-f="c"><input type="text" value="${esc(t.n)}" data-i="${i}" data-f="n"><button class="x" data-del="${i}">✕</button></div>`).join('')}
+$('tg').onclick=()=>{tagList();$('dg').showModal()};
+$('cl').onclick=()=>{$('dg').close();render()};
+$('ta').onclick=()=>{S.tags.push({id:'t'+Date.now(),n:'تگ جدید',c:'#888888'});save();tagList()};
+$('tl').oninput=e=>{const D=e.target.dataset;if(D.f){S.tags[D.i][D.f]=e.target.value;save()}};
+$('tl').onclick=e=>{const i=e.target.dataset.del;if(i!==undefined&&confirm('این تگ حذف شود؟ (کارهای قبلی بدون تگ می‌شوند)')){S.tags.splice(i,1);save();tagList()}};
+
+/* weekly */
+function weekly(){
+  const days=[...Array(7)].map((_,i)=>add(wk,i));
+  let tot=0,dn=0,pw=0,by={},rows='',a=[],b=[];
+  days.forEach(d=>{
+    const k=iso(d),L=S.days[k]||[],c=L.filter(x=>x.d).length;tot+=L.length;dn+=c;
+    rows+=`<div class="wr"><span class="wl">${fa(d,{weekday:'long',day:'numeric',month:'numeric'})}</span><div class="bar"><i style="width:${L.length?c/L.length*100:0}%"></i></div><small>${nz(c)}/${nz(L.length)}</small></div>`;
+    ord(L).forEach(([x])=>{
+      if(x.d)pw+=pts(x);const g=tg(x.g)?x.g:'-';(by[g]=by[g]||[0,0])[1]++;if(x.d)by[g][0]++;
+      (x.d?a:b).push(`<div class="t-row">${x.tm?`<span class="tm">${tmx(x)}</span>`:''}${chip(x)}<span class="tx">${esc(x.t)}</span><small>${fa(d,{day:'numeric',month:'numeric'})}</small></div>`);
+    });
+  });
+  $('wt').textContent=fa(wk,{day:'numeric',month:'long'})+' تا '+fa(add(wk,6),{day:'numeric',month:'long'});
+  $('sm').innerHTML=`<div><b>${nz(tot)}</b>کل کارها</div><div><b>${nz(dn)}</b>انجام شده</div><div><b>${nz(tot?Math.round(dn/tot*100):0)}٪</b>درصد انجام</div><div><b>${nz(pw)}</b>امتیاز</div>`;
+  $('wd').innerHTML=rows;
+  $('wg').innerHTML=[...S.tags.map(t=>[t.id,t.n,t.c]),['-','بدون تگ','#888888']].filter(x=>by[x[0]]).map(([id,n,c])=>`<div class="wr"><span class="wl"><span class="chip" style="background:${c}">${esc(n)}</span></span><div class="bar"><i style="width:${by[id][0]/by[id][1]*100}%;background:${c}"></i></div><small>${nz(by[id][0])}/${nz(by[id][1])}</small></div>`).join('')||'<div class="empty">—</div>';
+  $('wdn').innerHTML=a.join('')||'<div class="empty">—</div>';
+  $('wpd').innerHTML=b.join('')||'<div class="empty">—</div>';
+}
+$('wn').onclick=()=>{wk=add(wk,-7);weekly()};
+$('wp').onclick=()=>{wk=add(wk,7);weekly()};
+$('wc').onclick=()=>{wk=sow(new Date());weekly()};
+$('wx').onclick=()=>csv(wk,add(wk,6),'report-week-'+iso(wk)+'.csv');
+/* plan */
+const NT=[{id:'L',n:'یادگیری داده',c:'#0e8f8a'},{id:'W',n:'وب‌سایت شخصی',c:'#7b5ccf'},{id:'H',n:'همسر',c:'#d6457a'},{id:'R',n:'تفریح و استراحت',c:'#e0762f'},{id:'Z',n:'یادگیری زبان',c:'#2f7de1'},{id:'K',n:'امور خانه',c:'#a0792c'}];
+function ensureTags(){
+  const u=new Set();Object.values(S.days).forEach(L=>L.forEach(x=>u.add(x.g)));
+  S.tags=S.tags.filter(t=>!(/^[a-d]$/.test(t.id)&&/^تگ [۱-۴]$/.test(t.n)&&!u.has(t.id)));
+  NT.forEach(t=>{if(!tg(t.id))S.tags.push(t)});save();
+}
+/* [dayOffset from Saturday, start, end, tag, title (string or list rotating weekly)] */
+const SL=[
+[0,'17:30','20:30','L'],[0,'20:30','21:00','Z'],[0,'21:00','22:30','W'],
+[1,'17:30','18:30','H','همسر'],[1,'18:30','20:00','K',['نظافت: آشپزخانه و سرویس‌ها','نظافت: گردگیری و جارو','نظافت: مرتب‌سازی کمد و وسایل','نظافت: حمام و کف']],[1,'20:00','20:30','Z'],[1,'20:30','22:30','L'],
+[2,'17:30','19:30','L'],[2,'19:30','20:00','Z'],[2,'20:45','23:00','R','بدمینتون (رفت‌وآمد و کلاس)'],
+[3,'17:30','18:30','H','همسر'],[3,'18:30','20:00','K',['شستن و اتوی لباس‌ها','پرداخت قبض‌ها و کارهای اداری خانه','آماده‌سازی غذای هفته','تعمیرات و کارهای متفرقه']],[3,'20:00','20:30','Z'],[3,'20:30','22:30','L'],
+[4,'17:30','20:30','L'],[4,'20:30','21:00','Z'],[4,'21:00','22:30','W'],
+[5,'16:00','17:00','K','خرید هفتگی'],[5,'17:00','17:30','K','مرتب‌سازی سریع خانه قبل از آخر هفته'],[5,'17:30','18:00','Z'],
+[6,'18:00','21:00','L'],[6,'21:00','21:30','Z'],[6,'21:30','22:30','W']];
+const TT={L:'یادگیری تحلیل داده',W:'کار روی وب‌سایت',Z:'یادگیری زبان'};
+function ensureTpl(){if(!S.tpl||S.tv!==3){S.tpl=SL.map((x,i)=>({id:'s'+i,o:x[0],a:x[1],b:x[2],g:x[3],t:x[4]||TT[x[3]]}));S.tv=3;save()}}
+const mn=t=>+t.slice(0,2)*60+ +t.slice(3);
+function planView(){
+  const base=sow(new Date()),sum={},ti=x=>Array.isArray(x.t)?x.t[0]:x.t,cl=g=>(tg(g)||{c:'#888'}).c,cg=$('psg').value;
+  if(!$('psd').options.length)$('psd').innerHTML=[0,1,2,3,4,5,6].map(d=>`<option value="${d}">${fa(add(base,d),{weekday:'long'})}</option>`).join('');
+  $('psg').innerHTML='<option value="">بدون تگ</option>'+S.tags.map(t=>`<option value="${t.id}">${esc(t.n)}</option>`).join('');$('psg').value=tg(cg)?cg:'';
+  $('pw').innerHTML=S.tpl.length?[0,1,2,3,4,5,6].map(d=>`<div class="pd"><b>${fa(add(base,d),{weekday:'long'})}</b><div class="pb">${S.tpl.filter(x=>x.o===d).sort((p,q)=>p.a.localeCompare(q.a)).map(x=>{sum[x.g]=(sum[x.g]||0)+mn(x.b)-mn(x.a);return `<span class="chip" style="background:${cl(x.g)}">${ft(x.a)}–${ft(x.b)} ${esc(ti(x))} <b data-sd="${x.id}" style="cursor:pointer">✕</b></span>`}).join('')}</div></div>`).join(''):'<div class="empty">برنامهٔ هفتگی خالی است؛ از فرم پایین بلوک اضافه کن.</div>';
+  $('pp').innerHTML=Object.keys(sum).map(g=>`<span class="chip" style="background:${cl(g)}">${esc(tg(g)?tg(g).n:'بدون تگ')}: ${nz(+(sum[g]/60).toFixed(2))} ساعت</span>`).join('');
+}
+$('pw').onclick=e=>{const id=e.target.dataset.sd;if(!id||!confirm('این بلوک از برنامهٔ هفتگی حذف شود؟ (کارهای ساخته‌شده در تقویم می‌مانند)'))return;S.tpl=S.tpl.filter(x=>x.id!==id);save();planView()};
+$('psadd').onclick=()=>{const t=$('pst').value.trim(),a=$('psa').value,b=$('psb').value;if(!t||!a||!b||b<=a)return alert('عنوان و ساعت شروع و پایان (پایان بعد از شروع) را وارد کن.');S.tpl.push({id:'u'+Date.now(),o:+$('psd').value,a,b,g:$('psg').value,t});$('pst').value='';save();planView()};
+function genPlan(){
+  const t0=add(new Date(),1);t0.setHours(12);const tk=iso(t0),m0=jp(t0).month;
+  Object.keys(S.days).forEach(k=>{if(k>=tk){S.days[k]=S.days[k].filter(x=>!x.p||x.d);if(!S.days[k].length)delete S.days[k]}});
+  let m=m0;
+  for(let i=0,d=t0;;i++,d=add(t0,i)){
+    const jm=jp(d).month;if(jm!==m){if(i>=14)break;m=jm}
+    const o=(d.getDay()+1)%7,k=iso(d);
+    S.tpl.filter(x=>x.o===o).forEach(x=>{
+      const t=Array.isArray(x.t)?x.t[Math.floor(i/7)%x.t.length]:x.t,L=S.days[k]=S.days[k]||[];
+      if(!L.some(y=>y.p&&y.sid===x.id))L.push({t,d:false,tm:x.a,te:x.b,g:x.g,p:1,sid:x.id});
+    });
+  }
+  save();return t0;
+}
+$('pg').onclick=()=>{
+  if(!confirm('برنامه از فردا تا پایان ماه ساخته شود؟ (اگر کمتر از دو هفته به پایان ماه مانده باشد، ماه بعد هم ساخته می‌شود)'))return;
+  const st=genPlan();view=first(st);sel=iso(st);tab(1);
+};
+function tab(n){$('v1').style.display=n==1?'grid':'none';$('v2').style.display=n==2?'block':'none';$('v3').style.display=n==3?'block':'none';[1,2,3].forEach(i=>$('tb'+i).className=n==i?'p':'');if(n==1)render();if(n==2)weekly();if(n==3)planView()}
+$('tb1').onclick=()=>tab(1);$('tb2').onclick=()=>tab(2);$('tb3').onclick=()=>tab(3);
+/* points & rewards */
+function pts(x){return x.tm&&x.te?Math.max(5,Math.round((mn(x.te)-mn(x.tm))/6)):10}
+function bal(){let e=0;Object.values(S.days).forEach(L=>{L.forEach(x=>{if(x.d)e+=pts(x)});if(L.length>1&&L.every(x=>x.d))e+=20});return{e,b:e-S.sp.reduce((a,x)=>a+x.c,0)}}
+function badge(){const r=bal();$('pt').textContent=`⭐ ${nz(r.b)} امتیاز · سطح ${nz(Math.floor(r.e/500)+1)}`}
+let tto;function toast(m){const t=$('tt');t.textContent=m;t.style.display='block';clearTimeout(tto);tto=setTimeout(()=>t.style.display='none',1600)}
+function ensureRw(){if(!S.rw){S.rw=[{id:'r1',n:'یک قسمت سریال',c:40},{id:'r2',n:'دسر دلخواه',c:60},{id:'r3',n:'یک بیرون‌رفتن',c:300}];S.sp=[];save()}if(!S.sp)S.sp=[]}
+function rwView(){
+  const r=bal();$('rb').textContent=`(${nz(r.b)} امتیاز)`;
+  $('rl').innerHTML=S.rw.map((x,i)=>`<div class="tr"><span style="flex:1">${esc(x.n)} — ${nz(x.c)}</span><button class="p" data-b="${i}"${r.b<x.c?' disabled style="opacity:.4"':''}>خرج کن</button><button class="x" data-d="${i}">✕</button></div>`).join('')||'<div class="empty">پاداشی تعریف نشده.</div>';
+  $('rh').textContent=S.sp.length?'آخرین خرج‌ها: '+S.sp.slice(-5).map(x=>x.n+' ('+fa(new Date(x.d+'T12:00'),{day:'numeric',month:'numeric'})+')').join('، '):'';
+}
+$('tb4').onclick=()=>{rwView();$('rwd').showModal()};
+$('rx').onclick=()=>{$('rwd').close();render()};
+$('rl').onclick=e=>{
+  const D=e.target.dataset;
+  if(D.b!==undefined){const x=S.rw[D.b];if(bal().b>=x.c&&confirm(`«${x.n}» به ${nz(x.c)} امتیاز خرج شود؟`)){S.sp.push({n:x.n,c:x.c,d:iso(new Date())});save();rwView();badge()}}
+  else if(D.d!==undefined&&confirm('این پاداش حذف شود؟')){S.rw.splice(D.d,1);save();rwView()}
+};
+$('ra').onclick=()=>{const n=$('rn').value.trim(),c=parseInt(en($('rc').value));if(!n||!(c>0))return;S.rw.push({id:'r'+Date.now(),n,c});$('rn').value=$('rc').value='';save();rwView()};
+/* profile & effects */
+const TH=[['#0e8f8a','#2f7de1'],['#7b5ccf','#d6457a'],['#d6457a','#e0762f'],['#e0762f','#f2a93b'],['#2f7de1','#0e8f8a']];
+function applyMe(){
+  const m=S.me||{n:'',t:0},c=TH[m.t]||TH[0],r=document.documentElement.style;
+  r.setProperty('--ac',c[0]);r.setProperty('--g1',c[0]);r.setProperty('--g2',c[1]);
+  r.setProperty('--ac2',`rgba(${c[0].slice(1).match(/../g).map(x=>parseInt(x,16))},.14)`);
+  $('me').textContent=m.n||'دوست من';
+}
+function openPf(first){
+  $('psw').innerHTML=TH.map((c,i)=>`<label><input type="radio" name="th" value="${i}"><span style="background:linear-gradient(135deg,${c[0]},${c[1]})"></span></label>`).join('');
+  const m=S.me||{n:'',t:0};$('pn').value=m.n;document.querySelector(`input[name=th][value="${m.t}"]`).checked=true;
+  $('pfs').style.display=first?'block':'none';$('pfd').showModal();
+}
+$('pfd').oncancel=e=>{if(!S.me)e.preventDefault()};
+$('pfok').onclick=()=>{
+  const first=!S.me;S.me={n:$('pn').value.trim()||'دوست من',t:+document.querySelector('input[name=th]:checked').value};
+  if(first&&document.querySelector('input[name=st]:checked').value==='0')S.tpl=[];
+  save();applyMe();$('pfd').close();render();
+};
+$('me').onclick=()=>openPf(false);
+function boom(){for(let i=0;i<30;i++){const c=document.createElement('i');c.className='cf';c.style.cssText=`left:${Math.random()*100}vw;background:hsl(${Math.random()*360},80%,60%);animation-delay:${Math.random()*.4}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),2400)}}
+ensureTags();ensureTpl();ensureRw();applyMe();render();if(!S.me)openPf(true);
+</script>
+<script>
+if('serviceWorker' in navigator&&location.protocol!=='file:'&&!window.Capacitor)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+</script>
+</body>
+</html>
