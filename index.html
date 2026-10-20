@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تقویم کارها (تست)</title>
+<title>تقویم کارها</title>
 <meta name="theme-color" content="#0e8f8a">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 @font-face{font-family:Vazirmatn;src:url(fonts/Vazirmatn-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
 :root{--bg:#f2f6fb;--card:#fff;--ink:#1b2a3a;--mut:#6f8197;--line:#e3eaf2;--ac:#0e8f8a;--ac2:rgba(14,143,138,.14);--g1:#0e8f8a;--g2:#2f7de1;--ok:#22a06b;--today:#f2a93b;--warn:#c2410c;--sh:0 10px 30px rgba(20,40,70,.08)}
-@media(prefers-color-scheme:dark){:root{--bg:#0d141b;--card:#162029;--ink:#e6eef6;--mut:#8aa0b5;--line:#243340;--ok:#3dd68c;--sh:0 10px 30px rgba(0,0,0,.4)}}
+:root[data-theme=dark]{--bg:#0d141b;--card:#162029;--ink:#e6eef6;--mut:#8aa0b5;--line:#243340;--ok:#3dd68c;--sh:0 10px 30px rgba(0,0,0,.4)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d141b;--card:#162029;--ink:#e6eef6;--mut:#8aa0b5;--line:#243340;--ok:#3dd68c;--sh:0 10px 30px rgba(0,0,0,.4)}}
 *{box-sizing:border-box;font-family:"B Nazanin",Nazanin,Vazirmatn,serif}
 body{margin:0;min-height:100vh;color:var(--ink);font-size:18px;line-height:1.6;padding:0 14px 104px;background:var(--bg) radial-gradient(800px 380px at 90% -8%,var(--ac2),transparent) no-repeat}
 @media(max-width:780px){body{font-size:16px}}
@@ -91,6 +92,15 @@ dialog::backdrop{background:rgba(10,20,30,.5)}
 #tt{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;padding:6px 20px;border-radius:20px;display:none;z-index:9;box-shadow:var(--sh)}
 .cf{position:fixed;top:-20px;width:9px;height:14px;border-radius:2px;z-index:99;animation:fall 1.6s ease-in forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.3}}
+#auth{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto;background:var(--bg) radial-gradient(800px 380px at 90% -8%,var(--ac2),transparent) no-repeat}
+.acard{width:min(420px,100%);text-align:center}
+.acard img{border-radius:18px}
+.acard input:not([type=checkbox]):not([type=radio]),dialog input[type=password]{width:100%;margin-bottom:10px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.atabs{display:flex;gap:6px;margin:12px 0}.atabs button{flex:1}
+.alb{display:flex;gap:8px;align-items:center;margin:6px 0;text-align:start}
+.acard form{text-align:start}
+.sw{flex-wrap:wrap}
+.av span{background:var(--bg);display:grid;place-content:center;font-size:20px}
 </style>
 </head>
 <body>
@@ -146,12 +156,42 @@ dialog::backdrop{background:rgba(10,20,30,.5)}
   <div class="note">روی عنوان هر کار (در تقویم) کلیک کن تا عنوان، ساعت و تگ را ویرایش کنی؛ تغییر را می‌توانی فقط برای همان کار یا برای همهٔ کارهای آن برنامه (و برنامهٔ هفتگی) اعمال کنی. با «ساخت» دوباره، کارهای برنامه‌ایِ انجام‌نشدهٔ از فردا به بعد (حتی جابه‌جاشده‌ها) از روی برنامهٔ هفتگیِ فعلی بازسازی می‌شوند؛ تیک‌خورده‌ها و کارهای دستی ثابت می‌مانند.</div>
 </div>
 
+<div id="auth"><div class="card acard">
+  <img src="icon-192.png" width="72" height="72" alt="">
+  <h2 style="margin:8px 0 0">تقویم کارها</h2>
+  <div class="note">برنامه‌ریزی، امتیاز و پاداش؛ کاملاً افلاین</div>
+  <div class="atabs"><button id="atl" class="p" type="button">ورود</button><button id="atr" type="button">ساخت حساب</button></div>
+  <div id="am" class="warn" style="min-height:26px"></div>
+  <form id="lf" autocomplete="on">
+    <input type="text" id="lu" placeholder="نام کاربری" autocomplete="username" autocapitalize="none" dir="ltr">
+    <input type="password" id="lp" placeholder="رمز عبور" autocomplete="current-password" dir="ltr">
+    <label class="alb"><input type="checkbox" id="lrm" checked> مرا به خاطر بسپار</label>
+    <button class="p" style="width:100%;margin-top:8px">ورود</button>
+    <button type="button" id="lfg" class="x" style="margin-top:6px">رمز را فراموش کرده‌ام</button>
+  </form>
+  <form id="rf" style="display:none" autocomplete="on">
+    <input type="text" id="ru" placeholder="نام کاربری (انگلیسی)" autocomplete="username" autocapitalize="none" dir="ltr">
+    <input type="text" id="rn" placeholder="نام نمایشی">
+    <input type="password" id="rp1" placeholder="رمز عبور (حداقل ۶ کاراکتر)" autocomplete="new-password" dir="ltr">
+    <input type="password" id="rp2" placeholder="تکرار رمز" autocomplete="new-password" dir="ltr">
+    <div class="note">رنگ تم</div><div class="sw" id="rth"></div>
+    <label class="alb"><input type="radio" name="ap" value="1" checked> شروع با برنامهٔ هفتگی پیشنهادی</label>
+    <label class="alb"><input type="radio" name="ap" value="0"> شروع با برنامهٔ خالی (خودم می‌سازم)</label>
+    <label class="alb" id="rimw" style="display:none"><input type="checkbox" id="rim" checked> دیتای قبلی این دستگاه به این حساب منتقل شود</label>
+    <label class="alb"><input type="checkbox" id="rrm" checked> مرا به خاطر بسپار</label>
+    <button class="p" style="width:100%;margin-top:8px">ساخت حساب</button>
+  </form>
+  <div class="note">حساب‌ها فقط روی همین دستگاه ذخیره می‌شوند و دیتای هر حساب جداست.</div>
+</div></div>
 <dialog id="pfd">
-  <h3>پروفایل</h3>
-  <div class="tr"><input type="text" id="pn" placeholder="نام تو"></div>
-  <div class="sw" id="psw"></div>
-  <div id="pfs" style="margin-bottom:10px"><label style="display:block"><input type="radio" name="st" value="1" checked> شروع با برنامهٔ هفتگی پیشنهادی</label><label style="display:block"><input type="radio" name="st" value="0"> شروع با برنامهٔ خالی (خودم می‌سازم)</label></div>
-  <div class="tools"><button id="pfok" class="p">ذخیره</button></div>
+  <h3>پروفایل و شخصی‌سازی</h3>
+  <div class="tr"><input type="text" id="pn" placeholder="نام نمایشی"></div>
+  <div class="note">آواتار</div><div class="sw av" id="pav"></div>
+  <div class="note">رنگ تم</div><div class="sw" id="psw"></div>
+  <div class="tr"><label>حالت نمایش <select id="pmd"><option value="auto">خودکار</option><option value="light">روشن</option><option value="dark">تیره</option></select></label></div>
+  <div id="pfs" style="margin-bottom:10px"><label style="display:block"><input type="radio" name="st" value="1" checked> شروع با برنامهٔ هفتگی پیشنهادی</label><label style="display:block"><input type="radio" name="st" value="0"> شروع با برنامهٔ خالی</label></div>
+  <details class="note"><summary>تغییر رمز</summary><input type="password" id="cp0" placeholder="رمز فعلی" dir="ltr"><div class="tr"><input type="password" id="cp1" placeholder="رمز جدید" dir="ltr"><button id="cpb" type="button">تغییر</button></div></details>
+  <div class="tools"><button id="pfok" class="p">ذخیره</button><button id="pfx">بستن</button><button id="plo">خروج از حساب</button></div>
 </dialog>
 <div id="tt"></div>
 <dialog id="rwd">
@@ -177,11 +217,11 @@ dialog::backdrop{background:rgba(10,20,30,.5)}
 </dialog>
 
 <script>
-const K='tasks_calendar_v2',$=id=>document.getElementById(id);
+let K='';const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let S={days:{},bk:0,tags:[]};
-try{const r=localStorage.getItem(K);if(r)S=JSON.parse(r);else{const o=localStorage.getItem('tasks_calendar_v1');if(o)S.days=JSON.parse(o)}}catch(e){}
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){alert('ذخیره نشد! بکاپ بگیر.')}};
+const fresh=()=>({days:{},bk:0,tags:[]});let UID='';
+const save=()=>{if(!K)return;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){alert('ذخیره نشد! بکاپ بگیر.')}};
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const F=new Intl.DateTimeFormat('fa-IR-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric'});
 const jp=d=>{const o={};F.formatToParts(d).forEach(p=>o[p.type]=+p.value);return o};
@@ -422,28 +462,99 @@ $('rl').onclick=e=>{
   else if(D.d!==undefined&&confirm('این پاداش حذف شود؟')){S.rw.splice(D.d,1);save();rwView()}
 };
 $('ra').onclick=()=>{const n=$('rn').value.trim(),c=parseInt(en($('rc').value));if(!n||!(c>0))return;S.rw.push({id:'r'+Date.now(),n,c});$('rn').value=$('rc').value='';save();rwView()};
-/* profile & effects */
-const TH=[['#0e8f8a','#2f7de1'],['#7b5ccf','#d6457a'],['#d6457a','#e0762f'],['#e0762f','#f2a93b'],['#2f7de1','#0e8f8a']];
+/* profile, accounts & effects */
+const TH=[['#0e8f8a','#2f7de1'],['#7b5ccf','#d6457a'],['#d6457a','#e0762f'],['#e0762f','#f2a93b'],['#2f7de1','#0e8f8a'],['#16a34a','#0e8f8a'],['#9333ea','#2f7de1'],['#334155','#0e8f8a']];
+const AV=['🙂','😎','🦊','🐱','🐼','🦁','🚀','🌟','🎯','🔥'];
+const swatches=(id,name)=>{$(id).innerHTML=TH.map((c,i)=>`<label><input type="radio" name="${name}" value="${i}"${i===0?' checked':''}><span style="background:linear-gradient(135deg,${c[0]},${c[1]})"></span></label>`).join('')};
 function applyMe(){
-  const m=S.me||{n:'',t:0},c=TH[m.t]||TH[0],r=document.documentElement.style;
-  r.setProperty('--ac',c[0]);r.setProperty('--g1',c[0]);r.setProperty('--g2',c[1]);
-  r.setProperty('--ac2',`rgba(${c[0].slice(1).match(/../g).map(x=>parseInt(x,16))},.14)`);
-  $('me').textContent=m.n||'دوست من';
+  const m=S.me||{n:'',t:0},c=TH[m.t]||TH[0],r=document.documentElement;
+  r.style.setProperty('--ac',c[0]);r.style.setProperty('--g1',c[0]);r.style.setProperty('--g2',c[1]);
+  r.style.setProperty('--ac2',`rgba(${c[0].slice(1).match(/../g).map(x=>parseInt(x,16))},.14)`);
+  if(m.mode==='dark'||m.mode==='light')r.dataset.theme=m.mode;else delete r.dataset.theme;
+  $('me').textContent=(m.a||'🙂')+' '+(m.n||'دوست من');
 }
 function openPf(first){
-  $('psw').innerHTML=TH.map((c,i)=>`<label><input type="radio" name="th" value="${i}"><span style="background:linear-gradient(135deg,${c[0]},${c[1]})"></span></label>`).join('');
-  const m=S.me||{n:'',t:0};$('pn').value=m.n;document.querySelector(`input[name=th][value="${m.t}"]`).checked=true;
+  swatches('psw','th');$('pav').innerHTML=AV.map(a=>`<label><input type="radio" name="av" value="${a}"><span>${a}</span></label>`).join('');
+  const m=S.me||{n:'',t:0};$('pn').value=m.n;$('pmd').value=m.mode||'auto';
+  document.querySelector(`input[name=th][value="${m.t||0}"]`).checked=true;[...document.querySelectorAll('input[name=av]')].find(x=>x.value===(m.a||'🙂')).checked=true;
   $('pfs').style.display=first?'block':'none';$('pfd').showModal();
 }
 $('pfd').oncancel=e=>{if(!S.me)e.preventDefault()};
+$('pfx').onclick=()=>{if(S.me)$('pfd').close()};
 $('pfok').onclick=()=>{
-  const first=!S.me;S.me={n:$('pn').value.trim()||'دوست من',t:+document.querySelector('input[name=th]:checked').value};
+  const first=!S.me;S.me={n:$('pn').value.trim()||'دوست من',t:+document.querySelector('input[name=th]:checked').value,a:document.querySelector('input[name=av]:checked').value,mode:$('pmd').value};
   if(first&&document.querySelector('input[name=st]:checked').value==='0')S.tpl=[];
   save();applyMe();$('pfd').close();render();
 };
 $('me').onclick=()=>openPf(false);
 function boom(){for(let i=0;i<30;i++){const c=document.createElement('i');c.className='cf';c.style.cssText=`left:${Math.random()*100}vw;background:hsl(${Math.random()*360},80%,60%);animation-delay:${Math.random()*.4}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),2400)}}
-ensureTags();ensureTpl();ensureRw();applyMe();render();if(!S.me)openPf(true);
+
+/* accounts (local, per device) */
+const LK='tasks_users',SK='tasks_session',amsg=m=>{$('am').textContent=m};
+const users=()=>{try{return JSON.parse(localStorage.getItem(LK)||'[]')}catch(e){return[]}};
+const setUsers=u=>localStorage.setItem(LK,JSON.stringify(u));
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+const newSalt=()=>b64(crypto.getRandomValues(new Uint8Array(16)));
+async function hash(p,salt){
+  const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveBits']);
+  return b64(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:Uint8Array.from(atob(salt),c=>c.charCodeAt(0)),iterations:150000},k,256));
+}
+const NOCRYPTO='مرورگر از رمزنگاری پشتیبانی نمی‌کند؛ برنامه را از آدرس HTTPS باز کن.';
+function session(id,rem){localStorage.removeItem(SK);sessionStorage.removeItem(SK);(rem?localStorage:sessionStorage).setItem(SK,id)}
+function authTab(t){
+  $('lf').style.display=t==='l'?'block':'none';$('rf').style.display=t==='r'?'block':'none';
+  $('atl').className=t==='l'?'p':'';$('atr').className=t==='r'?'p':'';amsg('');
+  $('rimw').style.display=!users().length&&localStorage.getItem('tasks_calendar_v2')?'flex':'none';
+}
+function showAuth(){['lu','lp','ru','rn','rp1','rp2'].forEach(i=>$(i).value='');swatches('rth','ath');$('auth').style.display='flex';authTab(users().length?'l':'r')}
+function enter(id,init){
+  UID=id;K='tasks_u_'+id;S=fresh();
+  try{const r=localStorage.getItem(K);if(r)S=JSON.parse(r)}catch(e){}
+  if(init)init(S);
+  ensureTags();ensureTpl();ensureRw();applyMe();
+  view=first(new Date());sel=iso(new Date());wk=sow(new Date());
+  $('auth').style.display='none';tab(1);if(!S.me)openPf(true);
+}
+$('atl').onclick=()=>authTab('l');$('atr').onclick=()=>authTab('r');
+$('lf').onsubmit=async e=>{
+  e.preventDefault();const un=$('lu').value.trim().toLowerCase(),u=users().find(x=>x.u===un);let h='';
+  try{if(u)h=await hash($('lp').value,u.salt)}catch(_){return amsg(NOCRYPTO)}
+  if(!u||h!==u.h){await new Promise(r=>setTimeout(r,500));return amsg('نام کاربری یا رمز اشتباه است.')}
+  session(u.id,$('lrm').checked);enter(u.id);
+};
+$('rf').onsubmit=async e=>{
+  e.preventDefault();const un=$('ru').value.trim().toLowerCase(),dn=$('rn').value.trim(),p1=$('rp1').value;
+  if(!/^[a-z0-9_.-]{3,20}$/.test(un))return amsg('نام کاربری: ۳ تا ۲۰ حرف انگلیسی، عدد یا _ . -');
+  if(users().some(u=>u.u===un))return amsg('این نام کاربری قبلاً گرفته شده.');
+  if(p1.length<6)return amsg('رمز باید حداقل ۶ کاراکتر باشد.');
+  if(p1!==$('rp2').value)return amsg('رمز و تکرارش یکی نیست.');
+  try{
+    const salt=newSalt(),h=await hash(p1,salt),id='u'+Date.now().toString(36),imp=!users().length&&$('rim').checked&&localStorage.getItem('tasks_calendar_v2');
+    const th=+document.querySelector('input[name=ath]:checked').value,empty=document.querySelector('input[name=ap]:checked').value==='0';
+    setUsers([...users(),{id,u:un,salt,h}]);if(imp)localStorage.setItem('tasks_u_'+id,imp);
+    session(id,$('rrm').checked);
+    enter(id,S=>{S.me={n:dn||un,t:th,a:'🙂',mode:'auto'};if(empty&&!imp){S.tpl=[];S.tv=3}});
+  }catch(_){amsg(NOCRYPTO)}
+};
+$('lfg').onclick=()=>{
+  const un=$('lu').value.trim().toLowerCase(),u=users().find(x=>x.u===un);
+  if(!u)return amsg('اول نام کاربری را بنویس.');
+  if(confirm('رمز قابل بازیابی نیست (حساب‌ها فقط روی همین دستگاه‌اند). حساب «'+un+'» و تمام دیتایش حذف شود؟ اگر بکاپ داری، بعداً می‌توانی بازیابی کنی.')&&confirm('مطمئنی؟ این کار برگشت‌پذیر نیست.')){
+    setUsers(users().filter(x=>x.id!==u.id));localStorage.removeItem('tasks_u_'+u.id);amsg('حساب حذف شد.');
+  }
+};
+$('plo').onclick=()=>{save();localStorage.removeItem(SK);sessionStorage.removeItem(SK);K='';UID='';S=fresh();$('pfd').close();showAuth()};
+$('cpb').onclick=async()=>{
+  const u=users().find(x=>x.id===UID);if(!u)return;
+  try{
+    if(await hash($('cp0').value,u.salt)!==u.h)return alert('رمز فعلی اشتباه است.');
+    const n=$('cp1').value;if(n.length<6)return alert('رمز جدید باید حداقل ۶ کاراکتر باشد.');
+    u.salt=newSalt();u.h=await hash(n,u.salt);setUsers(users().map(x=>x.id===u.id?u:x));
+    $('cp0').value=$('cp1').value='';alert('رمز تغییر کرد.');
+  }catch(_){alert(NOCRYPTO)}
+};
+const sid0=localStorage.getItem(SK)||sessionStorage.getItem(SK);
+if(sid0&&users().some(u=>u.id===sid0))enter(sid0);else showAuth();
 </script>
 <script>
 if('serviceWorker' in navigator&&location.protocol!=='file:'&&!window.Capacitor)navigator.serviceWorker.register('sw.js').catch(()=>{});
