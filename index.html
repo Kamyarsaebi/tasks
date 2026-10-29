@@ -104,7 +104,7 @@ dialog::backdrop{background:rgba(10,20,30,.5)}
 </style>
 </head>
 <body>
-<header class="hd0"><div><small>سلام</small><div id="me" title="ویرایش پروفایل"></div></div><span id="pt"></span></header>
+<header class="hd0"><div><small>سلام</small><div id="me" title="ویرایش پروفایل"></div></div><span id="sy" style="cursor:pointer;font-size:14px;color:var(--mut)"></span><span id="pt"></span></header>
 <nav class="tabs"><button id="tb1" class="p"><i>📅</i>تقویم</button><button id="tb2"><i>📊</i>گزارش</button><button id="tb3"><i>🗓️</i>برنامه</button><button id="tb4"><i>🎁</i>پاداش‌ها</button></nav>
 
 <div class="wrap" id="v1">
@@ -163,25 +163,22 @@ dialog::backdrop{background:rgba(10,20,30,.5)}
   <div class="atabs"><button id="atl" class="p" type="button">ورود</button><button id="atr" type="button">ساخت حساب</button></div>
   <div id="am" class="warn" style="min-height:26px"></div>
   <form id="lf" autocomplete="on">
-    <input type="text" id="lu" placeholder="نام کاربری" autocomplete="username" autocapitalize="none" dir="ltr">
+    <input type="email" id="lu" placeholder="ایمیل" autocomplete="username" autocapitalize="none" dir="ltr">
     <input type="password" id="lp" placeholder="رمز عبور" autocomplete="current-password" dir="ltr">
-    <label class="alb"><input type="checkbox" id="lrm" checked> مرا به خاطر بسپار</label>
-    <button class="p" style="width:100%;margin-top:8px">ورود</button>
+        <button class="p" style="width:100%;margin-top:8px">ورود</button>
     <button type="button" id="lfg" class="x" style="margin-top:6px">رمز را فراموش کرده‌ام</button>
   </form>
   <form id="rf" style="display:none" autocomplete="on">
-    <input type="text" id="ru" placeholder="نام کاربری (انگلیسی)" autocomplete="username" autocapitalize="none" dir="ltr">
+    <input type="email" id="ru" placeholder="ایمیل" autocomplete="username" autocapitalize="none" dir="ltr">
     <input type="text" id="rn" placeholder="نام نمایشی">
     <input type="password" id="rp1" placeholder="رمز عبور (حداقل ۶ کاراکتر)" autocomplete="new-password" dir="ltr">
     <input type="password" id="rp2" placeholder="تکرار رمز" autocomplete="new-password" dir="ltr">
     <div class="note">رنگ تم</div><div class="sw" id="rth"></div>
     <label class="alb"><input type="radio" name="ap" value="1" checked> شروع با برنامهٔ هفتگی پیشنهادی</label>
     <label class="alb"><input type="radio" name="ap" value="0"> شروع با برنامهٔ خالی (خودم می‌سازم)</label>
-    <label class="alb" id="rimw" style="display:none"><input type="checkbox" id="rim" checked> دیتای قبلی این دستگاه به این حساب منتقل شود</label>
-    <label class="alb"><input type="checkbox" id="rrm" checked> مرا به خاطر بسپار</label>
     <button class="p" style="width:100%;margin-top:8px">ساخت حساب</button>
   </form>
-  <div class="note">حساب‌ها فقط روی همین دستگاه ذخیره می‌شوند و دیتای هر حساب جداست.</div>
+  <div class="note">دیتای تو روی خود دستگاه ذخیره و با سرور همگام می‌شود؛ بدون اینترنت هم کار می‌کند.</div>
 </div></div>
 <dialog id="pfd">
   <h3>پروفایل و شخصی‌سازی</h3>
@@ -190,8 +187,8 @@ dialog::backdrop{background:rgba(10,20,30,.5)}
   <div class="note">رنگ تم</div><div class="sw" id="psw"></div>
   <div class="tr"><label>حالت نمایش <select id="pmd"><option value="auto">خودکار</option><option value="light">روشن</option><option value="dark">تیره</option></select></label></div>
   <div id="pfs" style="margin-bottom:10px"><label style="display:block"><input type="radio" name="st" value="1" checked> شروع با برنامهٔ هفتگی پیشنهادی</label><label style="display:block"><input type="radio" name="st" value="0"> شروع با برنامهٔ خالی</label></div>
-  <details class="note"><summary>تغییر رمز</summary><input type="password" id="cp0" placeholder="رمز فعلی" dir="ltr"><div class="tr"><input type="password" id="cp1" placeholder="رمز جدید" dir="ltr"><button id="cpb" type="button">تغییر</button></div></details>
-  <div class="tools"><button id="pfok" class="p">ذخیره</button><button id="pfx">بستن</button><button id="plo">خروج از حساب</button></div>
+  <details class="note"><summary>تغییر رمز</summary><div class="tr"><input type="password" id="cp1" placeholder="رمز جدید" dir="ltr"><button id="cpb" type="button">تغییر</button></div></details>
+  <div class="tools"><button id="pfok" class="p">ذخیره</button><button id="pfx">بستن</button><button id="psy" type="button">همگام‌سازی الان</button><button id="plo">خروج از حساب</button></div>
 </dialog>
 <div id="tt"></div>
 <dialog id="rwd">
@@ -216,12 +213,14 @@ dialog::backdrop{background:rgba(10,20,30,.5)}
   <div class="tools"><button id="ta">+ تگ جدید</button><button id="cl" class="p">بستن</button></div>
 </dialog>
 
+<script src="config.js"></script>
+<script src="supabase.js"></script>
 <script>
 let K='';const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let S={days:{},bk:0,tags:[]};
 const fresh=()=>({days:{},bk:0,tags:[]});let UID='';
-const save=()=>{if(!K)return;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){alert('ذخیره نشد! بکاپ بگیر.')}};
+const save=()=>{if(!K)return;try{localStorage.setItem(K,JSON.stringify(S))}catch(e){alert('ذخیره نشد! بکاپ بگیر.')}if(typeof markDirty==='function')markDirty()};
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const F=new Intl.DateTimeFormat('fa-IR-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric'});
 const jp=d=>{const o={};F.formatToParts(d).forEach(p=>o[p.type]=+p.value);return o};
@@ -489,72 +488,141 @@ $('pfok').onclick=()=>{
 $('me').onclick=()=>openPf(false);
 function boom(){for(let i=0;i<30;i++){const c=document.createElement('i');c.className='cf';c.style.cssText=`left:${Math.random()*100}vw;background:hsl(${Math.random()*360},80%,60%);animation-delay:${Math.random()*.4}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),2400)}}
 
-/* accounts (local, per device) */
-const LK='tasks_users',SK='tasks_session',amsg=m=>{$('am').textContent=m};
-const users=()=>{try{return JSON.parse(localStorage.getItem(LK)||'[]')}catch(e){return[]}};
-const setUsers=u=>localStorage.setItem(LK,JSON.stringify(u));
-const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
-const newSalt=()=>b64(crypto.getRandomValues(new Uint8Array(16)));
-async function hash(p,salt){
-  const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveBits']);
-  return b64(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:Uint8Array.from(atob(salt),c=>c.charCodeAt(0)),iterations:150000},k,256));
+/* cloud accounts + offline-first sync (Supabase) */
+let META={base:0,dirty:false},quiet=false,last='',syncing=false,pt0=null,rec=false;
+const SBc=window.CFG&&window.supabase?window.CFG[window.ENV]:null;
+const SB=SBc?supabase.createClient(SBc.url,SBc.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'tasks_sb_'+window.ENV}}):null;
+const amsg=m=>{$('am').textContent=m};
+const errFa=e=>{const m=String(e&&e.message||e).toLowerCase();
+  if(m.includes('invalid login'))return 'ایمیل یا رمز اشتباه است.';
+  if(m.includes('already registered'))return 'این ایمیل قبلاً ثبت شده؛ وارد شو.';
+  if(m.includes('fetch')||m.includes('network'))return 'اتصال به سرور برقرار نشد (اینترنت یا فیلترشکن را چک کن).';
+  if(m.includes('rate limit')||m.includes('seconds'))return 'تعداد تلاش زیاد است؛ کمی صبر کن.';
+  if(m.includes('password'))return 'رمز قابل قبول نیست (حداقل ۶ کاراکتر).';
+  return 'خطا: '+(e&&e.message||e)};
+const ST={ok:'☁️ همگام',sync:'☁️ …',pend:'☁️ در انتظار',off:'📴 آفلاین',err:'⚠️ خطای همگام‌سازی',none:''};
+function setSt(k,e){const el=$('sy');el.textContent=(window.ENV==='dev'?'DEV ':'')+ST[k];el.title=e?String(e.message||e):'';if(e)console.warn(e)}
+const saveMeta=()=>{try{localStorage.setItem('tasks_meta_'+UID,JSON.stringify(META))}catch(e){}};
+function markDirty(){
+  if(!SB||!UID||quiet||JSON.stringify(S)===last)return;
+  META.dirty=true;saveMeta();clearTimeout(pt0);pt0=setTimeout(syncNow,2500);setSt('pend');
 }
-const NOCRYPTO='مرورگر از رمزنگاری پشتیبانی نمی‌کند؛ برنامه را از آدرس HTTPS باز کن.';
-function session(id,rem){localStorage.removeItem(SK);sessionStorage.removeItem(SK);(rem?localStorage:sessionStorage).setItem(SK,id)}
-function authTab(t){
-  $('lf').style.display=t==='l'?'block':'none';$('rf').style.display=t==='r'?'block':'none';
-  $('atl').className=t==='l'?'p':'';$('atr').className=t==='r'?'p':'';amsg('');
-  $('rimw').style.display=!users().length&&localStorage.getItem('tasks_calendar_v2')?'flex':'none';
+function applyRemote(row){
+  try{localStorage.setItem('tasks_prev_'+UID,JSON.stringify(S))}catch(e){}
+  S=row.data||fresh();quiet=true;ensureTags();ensureTpl();ensureRw();quiet=false;
+  localStorage.setItem(K,JSON.stringify(S));META={base:row.rev,dirty:false};last=JSON.stringify(S);saveMeta();
+  applyMe();render();toast('دیتا از سرور به‌روز شد');
 }
-function showAuth(){['lu','lp','ru','rn','rp1','rp2'].forEach(i=>$(i).value='');swatches('rth','ath');$('auth').style.display='flex';authTab(users().length?'l':'r')}
+async function push(rev){
+  const {data,error}=await SB.from('user_data').update({data:S,rev:rev+1}).eq('user_id',UID).eq('rev',rev).select('rev');
+  if(error)throw error;if(!data||!data.length)return false;
+  META={base:rev+1,dirty:false};last=JSON.stringify(S);return true;
+}
+async function syncNow(){
+  if(!SB||!UID||syncing)return;
+  if(!navigator.onLine){setSt('off');return}
+  syncing=true;setSt('sync');
+  try{
+    for(let tries=0;tries<3;tries++){
+      const {data:row,error}=await SB.from('user_data').select('data,rev').eq('user_id',UID).maybeSingle();
+      if(error)throw error;
+      if(!row){
+        const {error:e2}=await SB.from('user_data').insert({user_id:UID,data:S,rev:1});if(e2)throw e2;
+        META={base:1,dirty:false};last=JSON.stringify(S);break;
+      }
+      if(row.rev===META.base){if(!META.dirty||await push(row.rev))break;continue}
+      if(!META.dirty){applyRemote(row);break}
+      if(confirm('هم این دستگاه و هم سرور تغییر کرده‌اند.\nتأیید = نگه‌داشتن نسخهٔ این دستگاه\nلغو = نگه‌داشتن نسخهٔ سرور (نسخهٔ این دستگاه در حافظه می‌ماند)')){if(await push(row.rev))break}
+      else{applyRemote(row);break}
+    }
+    saveMeta();setSt('ok');
+  }catch(e){setSt('err',e)}finally{syncing=false}
+}
+$('sy').onclick=()=>syncNow();$('psy').onclick=()=>{$('pfd').close();syncNow()};
+addEventListener('online',()=>syncNow());addEventListener('offline',()=>setSt('off'));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNow()});
+setInterval(()=>{if(!document.hidden)syncNow()},60000);
+
+function offerImport(){
+  const c=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if((/^tasks_u_/.test(k)&&k!==K)||k==='tasks_calendar_v2')c.push(k)}
+  for(const k of c){
+    let d;try{d=JSON.parse(localStorage.getItem(k))}catch(e){continue}
+    const n=Object.values(d&&d.days||{}).flat().length;if(!n)continue;
+    if(confirm(`دیتای قبلی این دستگاه (${d.me&&d.me.n||'بدون نام'}، ${nz(n)} کار) به این حساب منتقل شود؟`)){
+      S=d;quiet=true;ensureTags();ensureTpl();ensureRw();quiet=false;localStorage.setItem(K,JSON.stringify(S));applyMe();render();return;
+    }
+  }
+}
+function swatchesInit(){}
+function showAuth(){['lu','lp','ru','rn','rp1','rp2'].forEach(i=>$(i).value='');swatches('rth','ath');$('auth').style.display='flex';authTab('l');setSt('none')}
+function authTab(t){$('lf').style.display=t==='l'?'block':'none';$('rf').style.display=t==='r'?'block':'none';$('atl').className=t==='l'?'p':'';$('atr').className=t==='r'?'p':'';amsg('')}
 function enter(id,init){
   UID=id;K='tasks_u_'+id;S=fresh();
   try{const r=localStorage.getItem(K);if(r)S=JSON.parse(r)}catch(e){}
-  if(init)init(S);
-  ensureTags();ensureTpl();ensureRw();applyMe();
-  view=first(new Date());sel=iso(new Date());wk=sow(new Date());
-  $('auth').style.display='none';tab(1);if(!S.me)openPf(true);
+  try{META=JSON.parse(localStorage.getItem('tasks_meta_'+id))||{base:0,dirty:false}}catch(e){META={base:0,dirty:false}}
+  quiet=true;if(init)init(S);ensureTags();ensureTpl();ensureRw();quiet=false;
+  last=META.dirty?'':JSON.stringify(S);
+  applyMe();view=first(new Date());sel=iso(new Date());wk=sow(new Date());
+  $('auth').style.display='none';tab(1);
+}
+async function afterAuth(user,init){
+  localStorage.setItem('tasks_last_'+window.ENV,JSON.stringify({id:user.id,email:user.email}));
+  enter(user.id,init);
+  try{const {data:row}=await SB.from('user_data').select('rev').eq('user_id',UID).maybeSingle();if(!row)offerImport()}catch(e){}
+  await syncNow();if(!S.me)openPf(true);
 }
 $('atl').onclick=()=>authTab('l');$('atr').onclick=()=>authTab('r');
 $('lf').onsubmit=async e=>{
-  e.preventDefault();const un=$('lu').value.trim().toLowerCase(),u=users().find(x=>x.u===un);let h='';
-  try{if(u)h=await hash($('lp').value,u.salt)}catch(_){return amsg(NOCRYPTO)}
-  if(!u||h!==u.h){await new Promise(r=>setTimeout(r,500));return amsg('نام کاربری یا رمز اشتباه است.')}
-  session(u.id,$('lrm').checked);enter(u.id);
+  e.preventDefault();if(!SB)return amsg('اتصال به سرور تنظیم نشده.');amsg('در حال ورود…');
+  try{const {data,error}=await SB.auth.signInWithPassword({email:$('lu').value.trim().toLowerCase(),password:$('lp').value});
+    if(error)return amsg(errFa(error));afterAuth(data.user)}catch(err){amsg(errFa(err))}
 };
 $('rf').onsubmit=async e=>{
-  e.preventDefault();const un=$('ru').value.trim().toLowerCase(),dn=$('rn').value.trim(),p1=$('rp1').value;
-  if(!/^[a-z0-9_.-]{3,20}$/.test(un))return amsg('نام کاربری: ۳ تا ۲۰ حرف انگلیسی، عدد یا _ . -');
-  if(users().some(u=>u.u===un))return amsg('این نام کاربری قبلاً گرفته شده.');
+  e.preventDefault();if(!SB)return amsg('اتصال به سرور تنظیم نشده.');
+  const em=$('ru').value.trim().toLowerCase(),dn=$('rn').value.trim(),p1=$('rp1').value;
+  if(!/^\S+@\S+\.\S+$/.test(em))return amsg('یک ایمیل معتبر وارد کن.');
   if(p1.length<6)return amsg('رمز باید حداقل ۶ کاراکتر باشد.');
   if(p1!==$('rp2').value)return amsg('رمز و تکرارش یکی نیست.');
+  amsg('در حال ساخت حساب…');
   try{
-    const salt=newSalt(),h=await hash(p1,salt),id='u'+Date.now().toString(36),imp=!users().length&&$('rim').checked&&localStorage.getItem('tasks_calendar_v2');
+    const {data,error}=await SB.auth.signUp({email:em,password:p1,options:{data:{display_name:dn}}});
+    if(error)return amsg(errFa(error));
+    if(!data.session)return amsg('حساب ساخته شد؛ ایمیلت را برای تأیید بررسی کن و بعد وارد شو.');
     const th=+document.querySelector('input[name=ath]:checked').value,empty=document.querySelector('input[name=ap]:checked').value==='0';
-    setUsers([...users(),{id,u:un,salt,h}]);if(imp)localStorage.setItem('tasks_u_'+id,imp);
-    session(id,$('rrm').checked);
-    enter(id,S=>{S.me={n:dn||un,t:th,a:'🙂',mode:'auto'};if(empty&&!imp){S.tpl=[];S.tv=3}});
-  }catch(_){amsg(NOCRYPTO)}
+    afterAuth(data.user,S=>{S.me={n:dn||em.split('@')[0],t:th,a:'🙂',mode:'auto'};if(empty){S.tpl=[];S.tv=3}});
+  }catch(err){amsg(errFa(err))}
 };
-$('lfg').onclick=()=>{
-  const un=$('lu').value.trim().toLowerCase(),u=users().find(x=>x.u===un);
-  if(!u)return amsg('اول نام کاربری را بنویس.');
-  if(confirm('رمز قابل بازیابی نیست (حساب‌ها فقط روی همین دستگاه‌اند). حساب «'+un+'» و تمام دیتایش حذف شود؟ اگر بکاپ داری، بعداً می‌توانی بازیابی کنی.')&&confirm('مطمئنی؟ این کار برگشت‌پذیر نیست.')){
-    setUsers(users().filter(x=>x.id!==u.id));localStorage.removeItem('tasks_u_'+u.id);amsg('حساب حذف شد.');
-  }
+$('lfg').onclick=async()=>{
+  const em=$('lu').value.trim().toLowerCase();if(!SB)return;
+  if(!/^\S+@\S+\.\S+$/.test(em))return amsg('اول ایمیلت را در کادر بالا بنویس.');
+  try{const {error}=await SB.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});
+    amsg(error?errFa(error):'اگر این ایمیل ثبت شده باشد، لینک بازیابی رمز برایش ارسال شد.')}catch(err){amsg(errFa(err))}
 };
-$('plo').onclick=()=>{save();localStorage.removeItem(SK);sessionStorage.removeItem(SK);K='';UID='';S=fresh();$('pfd').close();showAuth()};
+async function chPass(){
+  const n=prompt('رمز جدید را وارد کن (حداقل ۶ کاراکتر):');if(!n)return;
+  if(n.length<6)return alert('رمز باید حداقل ۶ کاراکتر باشد.');
+  try{const {error}=await SB.auth.updateUser({password:n});alert(error?errFa(error):'رمز تغییر کرد.')}catch(err){alert(errFa(err))}
+}
 $('cpb').onclick=async()=>{
-  const u=users().find(x=>x.id===UID);if(!u)return;
-  try{
-    if(await hash($('cp0').value,u.salt)!==u.h)return alert('رمز فعلی اشتباه است.');
-    const n=$('cp1').value;if(n.length<6)return alert('رمز جدید باید حداقل ۶ کاراکتر باشد.');
-    u.salt=newSalt();u.h=await hash(n,u.salt);setUsers(users().map(x=>x.id===u.id?u:x));
-    $('cp0').value=$('cp1').value='';alert('رمز تغییر کرد.');
-  }catch(_){alert(NOCRYPTO)}
+  const n=$('cp1').value;if(n.length<6)return alert('رمز جدید باید حداقل ۶ کاراکتر باشد.');
+  if(!navigator.onLine)return alert('برای تغییر رمز به اینترنت نیاز است.');
+  try{const {error}=await SB.auth.updateUser({password:n});$('cp1').value='';alert(error?errFa(error):'رمز تغییر کرد.')}catch(err){alert(errFa(err))}
 };
-const sid0=localStorage.getItem(SK)||sessionStorage.getItem(SK);
-if(sid0&&users().some(u=>u.id===sid0))enter(sid0);else showAuth();
+$('plo').onclick=async()=>{
+  $('pfd').close();save();if(META.dirty)await syncNow();
+  try{await SB.auth.signOut({scope:'local'})}catch(e){}
+  localStorage.removeItem('tasks_last_'+window.ENV);K='';UID='';S=fresh();showAuth();
+};
+async function boot(){
+  if(!SB){showAuth();return amsg('اتصال به سرور تنظیم نشده.')}
+  SB.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')rec=true});
+  let u=null;try{const {data}=await SB.auth.getSession();u=data&&data.session&&data.session.user}catch(e){}
+  if(!u&&!navigator.onLine){try{u=JSON.parse(localStorage.getItem('tasks_last_'+window.ENV)||'null')}catch(e){}}
+  if(!u)return showAuth();
+  localStorage.setItem('tasks_last_'+window.ENV,JSON.stringify({id:u.id,email:u.email}));
+  enter(u.id);await syncNow();if(!S.me)openPf(true);if(rec)chPass();
+}
+boot();
 </script>
 <script>
 if('serviceWorker' in navigator&&location.protocol!=='file:'&&!window.Capacitor)navigator.serviceWorker.register('sw.js').catch(()=>{});

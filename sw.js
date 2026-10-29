@@ -1,9 +1,9 @@
-const C='tasks-v2';
-const A=['./','index.html','manifest.json','icon-192.png','icon-512.png','icon-maskable-512.png','fonts/Vazirmatn-var.woff2'];
+const C='tasks-v3';
+const A=['./','index.html','config.js','supabase.js','manifest.json','icon-192.png','icon-512.png','icon-maskable-512.png','fonts/Vazirmatn-var.woff2'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(A)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>clients.claim())));
 self.addEventListener('fetch',e=>{
-  const r=e.request;if(r.method!=='GET')return;
+  const r=e.request;if(r.method!=='GET'||new URL(r.url).origin!==location.origin)return;
   if(r.mode==='navigate'){
     e.respondWith(fetch(r).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put('index.html',cp));return res}).catch(()=>caches.match('index.html')));
     return;
